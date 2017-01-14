@@ -2,6 +2,7 @@ package com.hackaz.fapps.fappshackaz;
 
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.support.v7.app.AppCompatActivity;
@@ -46,49 +47,39 @@ public class MainActivity extends AppCompatActivity {
         //GET_UNINSTALLED_PACKAGES;
         PackageManager pm = getPackageManager();
         List<ApplicationInfo> applications = pm.getInstalledApplications(flags);
-        List<ApplicationInfo> systemInstalled = pm.getInstalledApplications(flags);
-        List<ApplicationInfo> userInstalled = new LinkedList<>();
-        int numTotal = applications.size();
-        int numSys = systemInstalled.size();
-        int numUser = userInstalled.size();
-        Log.d("PRE NUMBER OF APPS", "***\nTotal: " + numTotal + "\nUser: " + numUser + "\nSystem: " + numSys + "***\n");
-
-        ApplicationInfo appInfo;
-        for (int i = 0; i < applications.size(); i++) {
-            appInfo = applications.get(i);
-            if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1) {
-                // System application
-            } else {
-                // Installed by user
-                userInstalled.add(appInfo);
-                systemInstalled.remove(appInfo); // perhaps use removeIf with filter?
-            }
-        }
-        numTotal = applications.size();
-        numSys = systemInstalled.size();
-        numUser = userInstalled.size();
-        if (numSys + numUser == numTotal) {
-            Log.d("POST NUMBER OF APPS", "*** Looking A O K boss! ***");
-        } else {
-            Log.d("POST NUMBER OF APPS", "***\nTotal: " + numTotal + "\nUser: " + numUser + "\nSystem: " + numSys + "***\n");
-        }
-        Log.d("****-----****\nLONG LIST", "lsadfjlaksfda;slfj");
-        for (int i = 0; i < applications.size(); i++)
-            Log.d("SOMETHING ELSE", applications.get(i).toString());
         // (01) TRY GETTING USER-INSTALLED APPS (01)
 
         String result = "";
-
-        for(int i = 0; i < applications.size(); i++) {
-            //result += applications.get(i).toString() + "\n"; // old
-
-            appInfo = applications.get(i);
-            result += (appInfo != null ? pm.getApplicationLabel(appInfo) : "(@@@unknown!!!)");
-        }
 
         editText.setText(result); //This seems to work,
         //String message = editText.getText().toString();
         //intent.putExtra(EXTRA_MESSAGE, message);
         //startActivity(intent);
+    }
+
+    /**
+     * Match signature of application to identify that if it is signed by system
+     * or not.
+     *
+     * @param packageName
+     *            package of application. Can not be blank.
+     * @return <code>true</code> if application is signed by system certificate,
+     *         otherwise <code>false</code>
+     */
+    public boolean isSystemApp(String packageName) {
+        try {
+            PackageManager pm = getPackageManager(); // get package manager
+            // Get packageinfo for target application
+            PackageInfo targetPkgInfo = pm.getPackageInfo(
+                    packageName, PackageManager.GET_SIGNATURES);
+            // Get packageinfo for system package
+            PackageInfo sys = pm.getPackageInfo(
+                    "android", PackageManager.GET_SIGNATURES);
+            // Match both packageinfo for there signatures
+            return (targetPkgInfo != null && targetPkgInfo.signatures != null && sys.signatures[0]
+                    .equals(targetPkgInfo.signatures[0]));
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 }
