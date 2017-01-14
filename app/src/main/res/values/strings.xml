@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FappsHackAz</string>
+    <string name="edit_message">Perform a search to get a list of installed apps.</string>
+    <string name="button_send">Lookup Applications</string>
 </resources>
