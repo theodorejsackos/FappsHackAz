@@ -36,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
         //GET_UNINSTALLED_PACKAGES;
         PackageManager pm = getPackageManager();
         List<ApplicationInfo> applications = pm.getInstalledApplications(flags);
-        List<ApplicationInfo> systemInstalled = applications;
+        List<ApplicationInfo> systemInstalled = pm.getInstalledApplications(flags);
         List<ApplicationInfo> userInstalled = new LinkedList<>();
         int numTotal = applications.size();
         int numSys = systemInstalled.size();
         int numUser = userInstalled.size();
-        Log.d("NUMBER OF APPS", "***\nTotal: " + numTotal + "\nUser: " + numUser + "\nSystem: " + numSys + "***\n");
+        Log.d("PRE NUMBER OF APPS", "***\nTotal: " + numTotal + "\nUser: " + numUser + "\nSystem: " + numSys + "***\n");
 
         ApplicationInfo appInfo;
         for (int i = 0; i < applications.size(); i++) {
@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
         numSys = systemInstalled.size();
         numUser = userInstalled.size();
         if (numSys + numUser == numTotal) {
-            Log.d("NUMBER OF APPS", "*** Looking A O K boss! ***");
+            Log.d("POST NUMBER OF APPS", "*** Looking A O K boss! ***");
         } else {
-            Log.d("NUMBER OF APPS", "***\nTotal: " + numTotal + "\nUser: " + numUser + "\nSystem: " + numSys + "***\n");
+            Log.d("POST NUMBER OF APPS", "***\nTotal: " + numTotal + "\nUser: " + numUser + "\nSystem: " + numSys + "***\n");
         }
         Log.d("****-----****\nLONG LIST", "lsadfjlaksfda;slfj");
         for (int i = 0; i < applications.size(); i++)
