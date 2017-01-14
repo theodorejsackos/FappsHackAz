@@ -21,6 +21,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Fappshackaz", pkgAppList.get(i).toString());
 
         //katie
-
+        //ayylmao-Alex
     }
 }
