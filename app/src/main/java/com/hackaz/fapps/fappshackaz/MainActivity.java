@@ -72,7 +72,17 @@ public class MainActivity extends AppCompatActivity {
         /* Ben's code should extract the list and we can build the string from it for the text box */
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_message);
-        editText.setText("TEST THIS MAY NOT WORK"); //This seems to work,
+
+        int flags = GET_META_DATA |
+                GET_SHARED_LIBRARY_FILES;// |
+        //GET_UNINSTALLED_PACKAGES;
+        PackageManager pm = getPackageManager();
+        List<ApplicationInfo> applications = pm.getInstalledApplications(flags);
+
+        String result = "";
+        for(int i = 0; i < applications.size(); i++)
+            result += applications.get(i).toString() + "\n";
+        editText.setText(result); //This seems to work,
         //String message = editText.getText().toString();
         //intent.putExtra(EXTRA_MESSAGE, message);
         //startActivity(intent);
