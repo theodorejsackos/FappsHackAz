@@ -36,7 +36,8 @@ public class Suggestor {
         users.add(testUser);
     }
     public List<String> getSuggestedApps(User mainUser) {
-        return null;
+        List<Tags> mainUserTags = mainUser.get
+
     }
 
 }
