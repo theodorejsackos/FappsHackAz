@@ -1,10 +1,14 @@
 package com.hackaz.fapps.fappshackaz;
 
+import android.annotation.TargetApi;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +16,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -97,5 +102,35 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return appNames;
+    }
+
+    /*Methods to get user stats on applications */
+
+    /** Get usage rating for the given package name (a particular app)
+     * 0 - App is not used
+     * 1 - App is used
+     * 2 - App is heavily used
+     */
+    @TargetApi(25)
+    public int getAppUsage(String packageName){
+        Calendar rightNow = Calendar.getInstance();
+        Calendar recentHist = Calendar.getInstance();
+        recentHist.add(Calendar.DAY_OF_YEAR, -1);
+
+        UsageStatsManager usm = (UsageStatsManager) this.getSystemService(this.USAGE_STATS_SERVICE);
+        List<UsageStats> usageStats  = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, recentHist.getTimeInMillis(), rightNow.getTimeInMillis());
+
+        for(UsageStats us : usageStats){
+            if(us.getPackageName().equals(packageName)){
+                long usage = us.getTotalTimeInForeground();
+                if(usage > 3600000)
+                    return 2;
+                if(usage > 600000)
+                    return 1;
+                else
+                    return 0;
+            }
+        }
+        return 0;
     }
 }
