@@ -11,8 +11,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
 import static android.content.pm.PackageManager.GET_SHARED_LIBRARY_FILES;
@@ -51,6 +54,14 @@ public class MainActivity extends AppCompatActivity {
 
         String result = "";
 
+        //for(int i = 0; i < applications.size(); i++) {
+            //result += applications.get(i).toString() + "\n"; // old
+        //    appInfo = applications.get(i);
+        //    result += (appInfo != null ? pm.getApplicationLabel(appInfo) : "(@@@unknown!!!)");
+        //}
+        List<String> appNames = getAppNamesForLookup(applications);
+        for(String name : appNames)
+            result += name + "\n";
         editText.setText(result); //This seems to work,
         //String message = editText.getText().toString();
         //intent.putExtra(EXTRA_MESSAGE, message);
@@ -81,5 +92,20 @@ public class MainActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    public List<String> getAppNamesForLookup(List<ApplicationInfo> appData){
+        List<String> appNames = new ArrayList<String>();
+        for(ApplicationInfo verbose : appData){
+            String  v = verbose.toString();
+            Log.d("The name is:", v);
+            Pattern p = Pattern.compile("\\{........(com.*)\\}");
+            Matcher m = p.matcher(v);
+            if(m.find()) {
+                appNames.add(m.group(1));
+                Log.d("GetAppNames", m.group(1));
+            }
+        }
+        return appNames;
     }
 }
