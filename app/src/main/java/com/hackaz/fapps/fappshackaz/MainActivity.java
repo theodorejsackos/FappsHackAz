@@ -25,12 +25,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> pkgAppList = this.getPackageManager().queryIntentActivities(mainIntent, 0);
-        Log.d("Fappshackaz", "First size: " + pkgAppList.size());
-        for (int i = 0; i < pkgAppList.size(); i++)
-            Log.d("Fappshackaz", pkgAppList.get(i).toString());
 
-        // TRY GETTING USER-INSTALLED APPS
+        // Probably don't need this code
+//        List<ResolveInfo> pkgAppList = this.getPackageManager().queryIntentActivities(mainIntent, 0);
+//        Log.d("Fappshackaz", "First size: " + pkgAppList.size());
+//        for (int i = 0; i < pkgAppList.size(); i++)
+//            Log.d("Fappshackaz", pkgAppList.get(i).toString());
+        // Probably don't need this code
+
+    }
+        /** Called when the user clicks on the button */
+    public void lookup_apps(View view) {
+        /* Ben's code should extract the list and we can build the string from it for the text box */
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        EditText editText = (EditText) findViewById(R.id.edit_message);
+
+        // (01) TRY GETTING USER-INSTALLED APPS (01)
         int flags = GET_META_DATA |
                 GET_SHARED_LIBRARY_FILES;// |
         //GET_UNINSTALLED_PACKAGES;
@@ -51,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // Installed by user
                 userInstalled.add(appInfo);
-                systemInstalled.remove(appInfo); // removeIf?
+                systemInstalled.remove(appInfo); // perhaps use removeIf with filter?
             }
         }
         numTotal = applications.size();
@@ -65,23 +75,17 @@ public class MainActivity extends AppCompatActivity {
         Log.d("****-----****\nLONG LIST", "lsadfjlaksfda;slfj");
         for (int i = 0; i < applications.size(); i++)
             Log.d("SOMETHING ELSE", applications.get(i).toString());
-        // TRY GETTING USER-INSTALLED APPS
-    }
-        /** Called when the user clicks on the button */
-    public void lookup_apps(View view) {
-        /* Ben's code should extract the list and we can build the string from it for the text box */
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.edit_message);
-
-        int flags = GET_META_DATA |
-                GET_SHARED_LIBRARY_FILES;// |
-        //GET_UNINSTALLED_PACKAGES;
-        PackageManager pm = getPackageManager();
-        List<ApplicationInfo> applications = pm.getInstalledApplications(flags);
+        // (01) TRY GETTING USER-INSTALLED APPS (01)
 
         String result = "";
-        for(int i = 0; i < applications.size(); i++)
-            result += applications.get(i).toString() + "\n";
+
+        for(int i = 0; i < applications.size(); i++) {
+            //result += applications.get(i).toString() + "\n"; // old
+
+            appInfo = applications.get(i);
+            result += (appInfo != null ? pm.getApplicationLabel(appInfo) : "(@@@unknown!!!)");
+        }
+
         editText.setText(result); //This seems to work,
         //String message = editText.getText().toString();
         //intent.putExtra(EXTRA_MESSAGE, message);
