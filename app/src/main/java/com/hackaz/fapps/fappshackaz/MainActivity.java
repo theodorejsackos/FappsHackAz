@@ -20,5 +20,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < pkgAppList.size(); i++)
             Log.d("Fappshackaz", pkgAppList.get(i).toString());
 
+        //katie
+
     }
 }
