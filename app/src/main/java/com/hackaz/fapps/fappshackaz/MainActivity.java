@@ -28,18 +28,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-        // Probably don't need this code
-//        List<ResolveInfo> pkgAppList = this.getPackageManager().queryIntentActivities(mainIntent, 0);
-//        Log.d("Fappshackaz", "First size: " + pkgAppList.size());
-//        for (int i = 0; i < pkgAppList.size(); i++)
-//            Log.d("Fappshackaz", pkgAppList.get(i).toString());
-        // Probably don't need this code
-
     }
         /** Called when the user clicks on the button */
     public void lookup_apps(View view) {
-        /* Ben's code should extract the list and we can build the string from it for the text box */
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_message);
 
@@ -70,12 +61,12 @@ public class MainActivity extends AppCompatActivity {
         numTotal = applications.size();
         numSys = systemInstalled.size();
         numUser = userInstalled.size();
-        if (numSys + numUser == numTotal) {
-            Log.d("POST NUMBER OF APPS", "*** Looking A O K boss! ***");
-        } else {
-            Log.d("POST NUMBER OF APPS", "***\nTotal: " + numTotal + "\nUser: " + numUser + "\nSystem: " + numSys + "***\n");
-        }
-        Log.d("****-----****\nLONG LIST", "lsadfjlaksfda;slfj");
+        //if (numSys + numUser == numTotal) {
+        //    Log.d("POST NUMBER OF APPS", "*** Looking A O K boss! ***");
+        //} else {
+        //    Log.d("POST NUMBER OF APPS", "***\nTotal: " + numTotal + "\nUser: " + numUser + "\nSystem: " + numSys + "***\n");
+        //}
+        //Log.d("****-----****\nLONG LIST", "lsadfjlaksfda;slfj");
         for (int i = 0; i < applications.size(); i++)
             Log.d("SOMETHING ELSE", applications.get(i).toString());
         // (01) TRY GETTING USER-INSTALLED APPS (01)
@@ -90,10 +81,9 @@ public class MainActivity extends AppCompatActivity {
         List<String> appNames = getAppNamesForLookup(applications);
         for(String name : appNames)
             result += name + "\n";
-        editText.setText(result); //This seems to work,
-        //String message = editText.getText().toString();
-        //intent.putExtra(EXTRA_MESSAGE, message);
-        //startActivity(intent);
+        //editText.setText(result); //This seems to work,
+        intent.putExtra(EXTRA_MESSAGE, result);
+        startActivity(intent);
     }
 
     public List<String> getAppNamesForLookup(List<ApplicationInfo> appData){
