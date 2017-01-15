@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         initializeApps();
         sendUserData();
         getSuggestions();
+        this.firstSuggestedToIcon(getSuggestions().get(0));
 
         // THEODORE'S DISPLAY ICON CODE
 //        try {
@@ -565,6 +566,7 @@ public class MainActivity extends AppCompatActivity {
 
         stringies.remove(0);
         if(stringies.size() == 0){
+            this.firstSuggestedToIcon("com.hackaz.fapps.fappshackaz");
             //display Toast message
             Context context2 = getApplicationContext();
             CharSequence text2 = "You've reached the end of your suggestions! Please purchase premium to receive more";
