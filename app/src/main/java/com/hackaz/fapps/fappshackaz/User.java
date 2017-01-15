@@ -1,6 +1,7 @@
 package com.hackaz.fapps.fappshackaz;
 import android.content.pm.ApplicationInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -25,12 +26,23 @@ public class User {
         matchingTags.retainAll(otherUser);
         return matchingTags;
     }
-
+    public List<Tags> getTags() {
+        return this.userTags;
+    }
     public List<ApplicationInfo> getInstalledApps() {
         return userAppsInstalled;
     }
     public List<String> getInstalledAppNames() {
         return userAppNames;
+    }
+    public List<String> getUncommonAppsFromOtherUser(List<String> otherApps) {
+        List<String> uncommonApps = new ArrayList<String>();
+        for (String s: otherApps) {
+            if (!this.userAppNames.contains(s))
+                uncommonApps.add(s);
+        }
+        return uncommonApps;
+
     }
 
 }
