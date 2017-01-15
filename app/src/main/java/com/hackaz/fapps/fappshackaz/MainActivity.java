@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.BufferedReader;
@@ -264,16 +265,56 @@ public class MainActivity extends AppCompatActivity {
                 OutputStream os = conn.getOutputStream();
                 PrintWriter out = new PrintWriter(os,true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                out.write("HELLO OUT THERE!\n");  //write the message to output stream
+                out.write(mMsg + "\n");  //write the message to output stream
                 out.flush();
                 String echo = in.readLine();
                 Log.d("echo_from_server: ", echo);
                 out.close();
                 conn.close();   //closing the connection
             } catch (Exception e) {
-                Log.d("FAILED_CONN", "\n\n\nHERE->>>" + e.getMessage());
+                Log.d("FAILED_CONN", e.getMessage());
                 e.printStackTrace();
             }
         }
+    }
+
+    private float x1,x2;
+    static final int MIN_DISTANCE = 150;
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        switch(event.getAction())
+        {
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x2 - x1;
+
+                if (Math.abs(deltaX) > MIN_DISTANCE)
+                {
+                    // Left to Right swipe action
+                    if (x2 > x1)
+                    {
+                        new Thread(new SendMessage("Right Swiffer Sweeper!")).start();
+                        Log.d("SERVER_CONN", "Message Send in thread");
+                    }
+
+                    // Right to left swipe action
+                    else
+                    {
+                        new Thread(new SendMessage("Left Window Swiper!")).start();
+                        Log.d("SERVER_CONN", "Message Send in thread");
+                    }
+
+                }
+                else
+                {
+                    // consider as something else - a screen tap for example
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 }
