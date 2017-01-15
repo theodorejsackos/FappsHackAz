@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
 import android.view.View;
 import android.widget.EditText;
 
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("The name is:", v);
             Pattern p = Pattern.compile("\\{........(com.*)\\}");
             Matcher m = p.matcher(v);
-            if(m.find()) {
+            if(m.find() && !m.equals("com.hackaz.fapps.fappshackaz")) {
                 appNames.add(m.group(1));
                 Log.d("GetAppNames", m.group(1));
             }
