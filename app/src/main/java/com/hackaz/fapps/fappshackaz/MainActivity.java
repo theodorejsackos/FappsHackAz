@@ -582,6 +582,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         this.firstSuggestedToIcon(stringies.get(0));
+        int flags = GET_META_DATA |
+                GET_SHARED_LIBRARY_FILES;
+        try {((TextView) findViewById(R.id.textView2)).setText(pm.getApplicationLabel(pm.getApplicationInfo(stringies.get(0), flags)).toString()); }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //download button will take you to the play store
