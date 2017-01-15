@@ -13,7 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
+import android.view.MotionEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
@@ -384,24 +384,75 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+    //next button
+    public void onClickNextButton(View v){
+        tv = (TextView)findViewById(R.id.description);
+        if(sug.getSuggestedApps().size() == 0){
+            tv.setText("No apps left to suggest :(");
+            return;
+        }
+        String temp = sug.getSuggestedApps().get(0); //gets that element
+        sug.getSuggestedApps().remove(0);
+        sug.getSuggestedApps().add(temp); //adds to the back of the lsit
+        displayDescription();
+    }
+
     //display descipriton and titles
     public void displayDescription(){
 
 
 
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
+    Intent intent = new Intent(Intent.ACTION_VIEW);
+    intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
+    startActivity(intent);
 
-
-        tv = (TextView)findViewById(R.id.description); //gets specific textview box;
-        tv.setText(this.getUserAppNamesAtBeginning() + "\n");
-    }
+    tv = (TextView)findViewById(R.id.description); //gets specific textview box;
+    tv.setText(this.getUserAppNamesAtBeginning() + "\n");
+}
 
     //gets first app of the list's name
     private String getUserAppNamesAtBeginning() {
-        ApplicationInfo ai = null;
-        String result = "";
-        return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+//        ApplicationInfo ai = null;
+//        String result = "";
+//        return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+        return sug.getSuggestedApps().get(0);
+    }
+    private float x1,x2;
+    static final int MIN_DISTANCE = 150;
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        switch(event.getAction())
+        {
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x2 - x1;
+
+                if (Math.abs(deltaX) > MIN_DISTANCE)
+                {
+                    // Left to Right swipe action
+                    if (x2 > x1)
+                    {
+
+                    }
+
+                    // Right to left swipe action
+                    else
+                    {
+
+                    }
+
+                }
+                else
+                {
+                    // consider as something else - a screen tap for example
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     private class ProfileNode implements Serializable{
