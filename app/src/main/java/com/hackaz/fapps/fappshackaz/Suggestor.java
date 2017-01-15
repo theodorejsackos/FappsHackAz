@@ -29,12 +29,13 @@ public class Suggestor {
 
         Map<String, Integer> apps1 = new HashMap<String, Integer>();
         //apps1.put("Terminal", 1);
+
         apps1.put("com.crowdstar.covetfashion", 2);
         //apps1.put("Tinder", 2);
         apps1.put("com.hackaz.fapps.fappshackaz", 2);
         //apps1.put("Testing", 0);
         apps1.put("com.android.calculator2", 1);
-        apps1.put("com.google.android.apps.maps", 2);
+
         User testUser = new User(tags1, apps1);
         users.add(testUser);
 
@@ -45,7 +46,7 @@ public class Suggestor {
         apps2.put("com.breel.geswallpapers", 1);
         apps2.put("com.svox.pico", 2);
         apps2.put("com.ustwo.lwp", 2);
-        apps2.put("com.hackaz.fapps.fappshackaz", 0);
+        //apps2.put("com.hackaz.fapps.fappshackaz", 0);
         User testUser2 = new User(tags1, apps2);
         users.add(testUser2);
 

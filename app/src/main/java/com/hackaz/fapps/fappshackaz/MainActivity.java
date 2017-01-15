@@ -3,6 +3,7 @@ package com.hackaz.fapps.fappshackaz;
 import android.annotation.TargetApi;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -21,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -31,7 +33,6 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -469,12 +470,19 @@ public class MainActivity extends AppCompatActivity {
     //dislike button will save app information into a personal dislike list
     //also removes from the suggested apps list
     public void onClickDislikeButton(View v){
-        tv = (TextView)findViewById(R.id.description);
         if(sug.getSuggestedApps().size() == 0){
-            tv.setText("No apps left to suggest :^)");
             return;
         }
         sug.currentUser.addElementToBanList(sug.getSuggestedApps().get(0)); //add string value
+
+        //display Toast message
+        Context context = getApplicationContext();
+        CharSequence text = "Added to Dislike List!";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
         sug.getSuggestedApps().remove(0);
         displayDescription();
     }
@@ -482,25 +490,21 @@ public class MainActivity extends AppCompatActivity {
     //download button will take you to the play store
     //also removes from the suggested apps list
     public void onClickDownloadButton(View v){
-        tv = (TextView)findViewById(R.id.description);
         if(sug.getSuggestedApps().size() == 0){
-            tv.setText("No apps left to suggest :(");
             return;
         }
         String temp = sug.getSuggestedApps().get(0); //gets that element
         sug.getSuggestedApps().remove(0);
         try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + temp)));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.google.android.apps.maps")));
         } catch (android.content.ActivityNotFoundException anfe) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + temp)));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + "com.google.android.apps.maps")));
         }
     }
 
     //next button
-    public void onClickNextButton(View v){
-        tv = (TextView)findViewById(R.id.description);
+    public void onClickNextButton1(View v){
         if(sug.getSuggestedApps().size() == 0){
-            tv.setText("No apps left to suggest :(");
             return;
         }
         String temp = sug.getSuggestedApps().get(0); //gets that element
@@ -511,15 +515,9 @@ public class MainActivity extends AppCompatActivity {
 
     //display descipriton and titles
     public void displayDescription(){
-
-
-
     Intent intent = new Intent(Intent.ACTION_VIEW);
     intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
     startActivity(intent);
-
-    tv = (TextView)findViewById(R.id.description); //gets specific textview box;
-    tv.setText(this.getUserAppNamesAtBeginning() + "\n");
 }
 
     //gets first app of the list's name
