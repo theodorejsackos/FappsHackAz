@@ -543,7 +543,7 @@ public class MainActivity extends AppCompatActivity {
     //dislike button will save app information into a personal dislike list
     //also removes from the suggested apps list
     public void onClickDislikeButton(View v){
-        if(sug.getSuggestedApps().size() == 0){
+        if(stringies.size() == 0){
             //display Toast message
             Context context = getApplicationContext();
             CharSequence text = "You've reached the end of your suggestions! Please purchase premium to receive more";
@@ -553,7 +553,7 @@ public class MainActivity extends AppCompatActivity {
             toast.show();
             return;
         }
-        sug.currentUser.addElementToBanList(sug.getSuggestedApps().get(0)); //add string value
+        sug.currentUser.addElementToBanList(stringies.get(0)); //add string value
 
         //display Toast message
         Context context = getApplicationContext();
@@ -564,7 +564,7 @@ public class MainActivity extends AppCompatActivity {
         toast.show();
 
         stringies.remove(0);
-        if(sug.getSuggestedApps().size() == 0){
+        if(stringies.size() == 0){
             //display Toast message
             Context context2 = getApplicationContext();
             CharSequence text2 = "You've reached the end of your suggestions! Please purchase premium to receive more";
@@ -616,7 +616,7 @@ public class MainActivity extends AppCompatActivity {
     //goes to app store
     public void displayDescription(){
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
+        intent.setData(Uri.parse("market://details?id=" + stringies.get(0)));
         startActivity(intent);
     }
 
@@ -625,7 +625,7 @@ public class MainActivity extends AppCompatActivity {
 //        ApplicationInfo ai = null;
 //        String result = "";
 //        return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-        return sug.getSuggestedApps().get(0);
+        return stringies.get(0);
     }
     private float x1,x2;
     static final int MIN_DISTANCE = 150;
