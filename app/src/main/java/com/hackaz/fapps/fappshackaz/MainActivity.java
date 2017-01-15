@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         pm = getPackageManager();
-
+        getSuggestions();
         new Thread(new SendMessage("Hello there buddy!")).start();
         Log.d("SERVER_CONN", "Message Send in thread");
     }
@@ -311,6 +311,11 @@ public class MainActivity extends AppCompatActivity {
     //like button will save app information into a personal like list?
     //also removes from the suggested apps list
     public void onClickLikeButton(View v){
+        tv = (TextView)findViewById(R.id.description);
+        if(sug.getSuggestedApps().size() == 0){
+            tv.setText("No apps left to suggest :(");
+            return;
+        }
         sug.currentUser.addElementToInterestedList(sug.getSuggestedApps().get(0)); //add string value
         sug.getSuggestedApps().remove(0);
         displayDescription();
@@ -319,6 +324,11 @@ public class MainActivity extends AppCompatActivity {
     //dislike button will save app information into a personal dislike list
     //also removes from the suggested apps list
     public void onClickDislikeButton(View v){
+        tv = (TextView)findViewById(R.id.description);
+        if(sug.getSuggestedApps().size() == 0){
+            tv.setText("No apps left to suggest :^)");
+            return;
+        }
         sug.currentUser.addElementToBanList(sug.getSuggestedApps().get(0)); //add string value
         sug.getSuggestedApps().remove(0);
         displayDescription();
@@ -327,6 +337,11 @@ public class MainActivity extends AppCompatActivity {
     //download button will take you to the play store
     //also removes from the suggested apps list
     public void onClickDownloadButton(View v){
+        tv = (TextView)findViewById(R.id.description);
+        if(sug.getSuggestedApps().size() == 0){
+            tv.setText("No apps left to suggest :(");
+            return;
+        }
         String temp = sug.getSuggestedApps().get(0); //gets that element
         sug.getSuggestedApps().remove(0);
         try {
@@ -344,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             appInfo = pm.getApplicationInfo(sug.getSuggestedApps().get(0), 0);
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            //appInfo = sug.getSuggestedApps().get(0);
         }
         String des = appInfo.loadDescription(pm).toString();
 
@@ -358,4 +373,7 @@ public class MainActivity extends AppCompatActivity {
         String result = "";
         return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
     }
+
+
+
 }
