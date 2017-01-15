@@ -466,20 +466,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    //like button will save app information into a personal like list?
-    //also removes from the suggested apps list
-    public void onClickLikeButton(View v){
-        tv = (TextView)findViewById(R.id.description);
-        if(sug.getSuggestedApps().size() == 0){
-            tv.setText("No apps left to suggest :(");
-            return;
-        }
-        sug.currentUser.addElementToInterestedList(sug.getSuggestedApps().get(0)); //add string value
-        sug.getSuggestedApps().remove(0);
-        displayDescription();
-    }
-
     //dislike button will save app information into a personal dislike list
     //also removes from the suggested apps list
     public void onClickDislikeButton(View v){
