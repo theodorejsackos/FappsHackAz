@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+    <drawable name="image_area">@android:color/transparent</drawable>
+    <string name="text_view_description">Desc</string>
     <string name="app_name">FappsHackAz</string>
     <string name="edit_message">Perform a search to get a list of installed apps.</string>
     <string name="button_send">Lookup Applications</string>

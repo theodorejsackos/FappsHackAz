@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -51,8 +52,17 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         pm = getPackageManager();
         getSuggestions();
-        new Thread(new SendMessage("Hello there buddy!")).start();
-        Log.d("SERVER_CONN", "Message Send in thread");
+
+        try {
+            Drawable icon = pm.getApplicationIcon("com.groupme.android");
+            findViewById(R.id.image_area).setBackgroundDrawable(icon);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        //new Thread(new SendMessage("Hello there buddy!")).start();
+        //Log.d("SERVER_CONN", "Message Send in thread");
 
 //        try {
 //            ProfileNode pn = new ProfileNode();
