@@ -356,13 +356,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
+    Intent intent = new Intent(Intent.ACTION_VIEW);
+    intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
+    startActivity(intent);
 
-
-        tv = (TextView)findViewById(R.id.description); //gets specific textview box;
-        tv.setText(this.getUserAppNamesAtBeginning() + "\n");
-    }
+    tv = (TextView)findViewById(R.id.description); //gets specific textview box;
+    tv.setText(this.getUserAppNamesAtBeginning() + "\n");
+}
 
     //gets first app of the list's name
     private String getUserAppNamesAtBeginning() {
