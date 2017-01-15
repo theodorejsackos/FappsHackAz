@@ -12,18 +12,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-import android.view.MotionEvent;
+
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -40,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private Suggestor sug;
     private TextView tv;
     PackageManager pm = null;
-
+    private Map<String,AppNode> apps;
     PrintWriter out = null;
     BufferedReader in = null;
     Socket conn = null;
@@ -51,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         pm = getPackageManager();
+        apps = new HashMap<String,AppNode>();
+        initializeApps();
+        sendUserData();
         getSuggestions();
 
         try {
@@ -311,6 +318,31 @@ public class MainActivity extends AppCompatActivity {
         return sug.getSuggestedApps();
     }
 
+    public void initializeApps() {
+        try {
+            FileInputStream fis = new FileInputStream("appdata");
+            ObjectInputStream input = new ObjectInputStream(fis);
+            apps = (HashMap<String,AppNode>) input.readObject();
+            input.close();
+            fis.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendUserData() {
+
+        try {
+            FileOutputStream fos = new FileOutputStream("appdata");
+            ObjectOutputStream outFile = new ObjectOutputStream(fos);
+            outFile.writeObject(apps);
+            outFile.close();
+            //new Thread(new SendMessage())
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
     private class SendMessage implements Runnable {
         private String mMsg;
 
@@ -497,9 +529,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
-    private class ProfileNode implements Serializable{
+    private class ProfileNode implements Serializable {
         public UserDemographic ud;
         public TradeCraft tc;
         public List<Interests> interests;
+    }
+
+    private class AppNode implements Serializable { // package names will map to an AppNode
+        public String icon;
+        public String name;
+        public String desc;
     }
 }
