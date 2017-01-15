@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -20,6 +19,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -78,7 +79,10 @@ public class MainActivity extends AppCompatActivity {
         /*result += "Num User Apps: "+userPackageNames.size()+"\n";
         result += "= = = = = = = = = = =\n";*/
         result += getUserAppNames(userPackageNames);
-
+        result += "Suggested apps: \n";
+        List<String> sugpnames = getSuggestions();
+        for (String s: sugpnames)
+                result += s + "\n";
         //editText.setText(result); //This seems to work,
         intent.putExtra(EXTRA_MESSAGE, result);
         startActivity(intent);
@@ -228,6 +232,24 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return 0;
+    }
+
+    public List<String> getSuggestions() { // currently hardcoded user tags
+        List<Tags> tags = new ArrayList<Tags>();
+        tags.add(Tags.BASKETBALL);
+        tags.add(Tags.COMPUTER_SCIENCE);
+        int flags = GET_META_DATA |
+                GET_SHARED_LIBRARY_FILES;
+        List<ApplicationInfo> applications = pm.getInstalledApplications(flags);
+        List<String> appNames = getAppNamesForLookup(applications); // gets package names
+        Map<String, Integer> userPackageNames = new HashMap<String, Integer>(); // holds package name and usage
+        for(String packageName : appNames) {
+            if(!isSystemApp(packageName)) {
+                userPackageNames.put(packageName, getAppUsage(packageName));
+            }
+        }
+        Suggestor sug = new Suggestor(tags, userPackageNames);
+        return sug.getSuggestedApps();
     }
 
     private class SendMessage implements Runnable {

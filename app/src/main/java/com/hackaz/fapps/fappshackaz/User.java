@@ -1,20 +1,16 @@
 package com.hackaz.fapps.fappshackaz;
-import android.content.pm.ApplicationInfo;
-
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Set;
 public class User {
     private List<Tags> userTags;
-    private List<ApplicationInfo> userAppsInstalled;
-    private List<String> userAppNames;
-    public User(List<Tags> tags, List<ApplicationInfo> userAppsInstalled) {
-        this.userTags = tags;
-        this.userAppsInstalled = userAppsInstalled;
+    private Map<String, Integer> userApps; //hold package names, usage(0-2)
 
-    }
-    public User(List<Tags> tags, List<String> userAppsInstalled, int i) { //int i just used to differentiate constructor
+
+    public User(List<Tags> tags, Map<String, Integer> userAppsInstalled) {
         this.userTags = tags;
-        this.userAppNames = userAppsInstalled;
+        this.userApps = userAppsInstalled;
 
     }
     /*
@@ -25,12 +21,20 @@ public class User {
         matchingTags.retainAll(otherUser);
         return matchingTags;
     }
-
-    public List<ApplicationInfo> getInstalledApps() {
-        return userAppsInstalled;
+    public List<Tags> getTags() {
+        return this.userTags;
     }
-    public List<String> getInstalledAppNames() {
-        return userAppNames;
+    public Map<String, Integer> getInstalledAppNames() {
+        return userApps;
+    }
+    public List<String> getUncommonAppsFromOtherUser(Set<String> otherApps) {
+        List<String> uncommonApps = new ArrayList<String>();
+        for (String s: otherApps) {
+            if (!this.userApps.keySet().contains(s))
+                uncommonApps.add(s);
+        }
+        return uncommonApps;
+
     }
 
 }

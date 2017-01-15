@@ -1,4 +1,4 @@
-package com.lorentzos.flingswipe;
+package com.hackaz.fapps.fappshackaz;
 
 import android.content.Context;
 import android.util.AttributeSet;
