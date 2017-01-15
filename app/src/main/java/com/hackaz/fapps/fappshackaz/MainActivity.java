@@ -434,6 +434,16 @@ public class MainActivity extends AppCompatActivity {
             apps = (HashMap<String,AppNode>) input.readObject();
             input.close();
             fis.close();
+
+            Socket conn = new Socket("ec2-35-166-192-131.us-west-2.compute.amazonaws.com", 8080);
+            OutputStream os = conn.getOutputStream();
+            PrintWriter out = new PrintWriter(os,true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            new Thread(new SendMessage("DOWNLD, 1"));
+            int numApps = Integer.parseInt(in.readLine());
+            for (int i = 0; i < numApps; i++) {
+                in.readLine().split(", ");
+            }
         } catch (Exception e) {
             System.out.println("No previous appdata found. Creating new data.");
         }
@@ -444,6 +454,8 @@ public class MainActivity extends AppCompatActivity {
                 GET_SHARED_LIBRARY_FILES;
         List<ApplicationInfo> appsInfo = pm.getInstalledApplications(flags);
         List<String> pNames = getUserAppPackageNames(getAppNamesForLookup(appsInfo));
+
+        new Thread(new SendMessage("UPLOAD, " + pNames.size() + "\n"));
         for (String s: pNames) {
             ApplicationInfo appInfo = null;
            try {
@@ -455,12 +467,12 @@ public class MainActivity extends AppCompatActivity {
                 Drawable icon = pm.getApplicationIcon(appInfo);
                 Bitmap b1 = drawableToBitmap(icon);
                 String s1 = encodeToBase64(b1);
-                if (pm.getApplicationLabel(appInfo) == null || appInfo.loadDescription(pm) == null)
+                if (pm.getApplicationLabel(appInfo) == null)
                     return;
-                AppNode a = new AppNode(s1, pm.getApplicationLabel(appInfo).toString(), appInfo.loadDescription(pm).toString());
+                AppNode a = new AppNode(s1, pm.getApplicationLabel(appInfo).toString());
                 apps.put(s, a);
-                System.out.println(s1 + ", " + pm.getApplicationLabel(appInfo).toString() + ", " + appInfo.loadDescription(pm).toString());
-                new Thread(new SendMessage(s1 + ", " + pm.getApplicationLabel(appInfo).toString() + ", " + appInfo.loadDescription(pm).toString() + "\n"));
+                System.out.println(s1 + ", " + pm.getApplicationLabel(appInfo).toString());
+                new Thread(new SendMessage(s1 + ", " + pm.getApplicationLabel(appInfo).toString() + "\n"));
             } // don't need to add app data otherwise.
         }
         try {
@@ -690,13 +702,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class AppNode implements Serializable { // package names will map to an AppNode
-        public AppNode(String icon, String name, String desc){
+        public AppNode(String icon, String name){
             this.icon = icon;
             this.name = name;
-            this.desc = desc;
         }
         public String icon;
         public String name;
-        public String desc;
     }
 }
