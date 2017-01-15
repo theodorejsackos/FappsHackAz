@@ -28,20 +28,13 @@
         android:layout_width="128dp"
         android:layout_height="128dp" />
 
-    <TextView
-        android:text="Description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/text_view_description"
-        android:layout_weight="0.59" />
-
     <Button
         android:text="Next"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/button3"
         android:layout_weight="0.11"
-        android:onClick="onClickNextButton (MainActivity)" />
+        android:onClick="onClickNextButton1 (MainActivity)" />
 
     <Button
         android:text="Dislike"
