@@ -1,3 +1,5 @@
+package com.hackaz.fapps.fappshackaz;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -40,8 +42,8 @@ public class MyActivity extends Activity {
         al.add("c++");
         al.add("css");
         al.add("javascript");
-
-        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
+                                        // maybe string?? idk
+        arrayAdapter = new ArrayAdapter<String>(this, R.layout.item, R.id.helloText, al );
 
 
         flingContainer.setAdapter(arrayAdapter);
