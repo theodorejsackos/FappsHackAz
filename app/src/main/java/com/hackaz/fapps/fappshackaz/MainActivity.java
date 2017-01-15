@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         getSuggestions();
         new Thread(new SendMessage("Hello there buddy!")).start();
         Log.d("SERVER_CONN", "Message Send in thread");
+
     }
     /** Called when the user clicks on the button */
     public void lookup_apps(View view) {
@@ -119,6 +121,37 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return result;
+    }
+
+    public LinkedList<String> getUserAppPackageNames(List<String> packageNames) {
+        ApplicationInfo ai = null;
+        LinkedList<String> result = new LinkedList<>();
+        for(String uName : packageNames) {
+            try {
+                ai = pm.getApplicationInfo(uName, 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            if (!isAppPreLoaded(uName)) {
+                String dir = ai.sourceDir;
+                if(!isSystemDir(dir)) {
+                    result.add(uName);
+                }
+            }
+        }
+        return result;
+    }
+
+    public LinkedList<Drawable> getIcons(LinkedList<String> pNames) {
+        LinkedList<Drawable> icons = new LinkedList<>();
+        for(String p : pNames) {
+            try {
+                icons.add(pm.getApplicationIcon(p));
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return icons;
     }
 
     /**
@@ -247,7 +280,8 @@ public class MainActivity extends AppCompatActivity {
         int flags = GET_META_DATA |
                 GET_SHARED_LIBRARY_FILES;
         List<ApplicationInfo> applications = pm.getInstalledApplications(flags);
-        List<String> appNames = getAppNamesForLookup(applications); // gets package names
+        List<String> allPackageNames = getAppNamesForLookup(applications); // gets package names
+        List<String> appNames = getUserAppPackageNames(allPackageNames); // gets user package names
         Map<String, Integer> userPackageNames = new HashMap<String, Integer>(); // holds package name and usage
         for(String packageName : appNames) {
             if(!isSystemApp(packageName)) {
