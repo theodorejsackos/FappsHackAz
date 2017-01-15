@@ -13,6 +13,7 @@ import android.util.Log;
 import android.net.Uri;
 import android.widget.TextView;
 
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.BufferedReader;
@@ -120,12 +121,6 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    public String getUserAppNamesAtBeginning() {
-        ApplicationInfo ai = null;
-        String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-        return applicationName;
-    }
-
     /**
      * Called by getUserAppNames, uses regex to check if APK directory path is in system/ or data/
      * @param path
@@ -207,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("The name is:", v);
             Pattern p = Pattern.compile("\\{........(com.*)\\}");
             Matcher m = p.matcher(v);
-            if(m.find() && !m.equals("com.hackaz.fapps.fappshackaz")) {
+            if(m.find()) {
                 appNames.add(m.group(1));
                 Log.d("GetAppNames", m.group(1));
             }
