@@ -4,6 +4,7 @@
     package="com.hackaz.fapps.fappshackaz"
     tools:ignore="MissingLeanbackLauncher,MissingLeanbackSupport">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/fapps_icon"
@@ -11,7 +12,7 @@
         android:supportsRtl="true"
 
         android:theme="@style/AppTheme">
-        <uses-permission android:name="android.permission.INTERNET"/>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,5 +23,4 @@
         <activity android:name=".DisplayMessageActivity" />
         <activity android:name=".MyActivity" />
     </application>
-
 </manifest>

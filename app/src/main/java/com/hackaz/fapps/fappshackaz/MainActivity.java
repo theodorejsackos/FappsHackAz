@@ -15,6 +15,7 @@ import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -260,19 +261,18 @@ public class MainActivity extends AppCompatActivity {
         }
         public void run() {
             try {
-                Log.d("SERVER_CONN", "Reached 1");
-                conn = new Socket("192.12.69.186", 1925);  //connect to server
-                Log.d("SERVER_CONN", "Reached 2");
-                out = new PrintWriter(conn.getOutputStream(),true);
-                Log.d("SERVER_CONN", "Reached 3");
-                in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                out.write(mMsg);  //write the message to output stream
+                Socket conn = new Socket("ec2-35-162-158-36.us-west-2.compute.amazonaws.com", 8080);
+                OutputStream os = conn.getOutputStream();
+                PrintWriter out = new PrintWriter(os,true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                out.write("HELLO OUT THERE!\n");  //write the message to output stream
+                out.flush();
+                String echo = in.readLine();
+                Log.d("echo_from_server: ", echo);
                 out.close();
                 conn.close();   //closing the connection
-
-                Log.d("SERVER_CONN", "(In thread) Message sent");
             } catch (Exception e) {
-                Log.d("SERVER_CONN", "FAILURE");
+                Log.d("FAILED_CONN", "\n\n\nHERE->>>" + e.getMessage());
                 e.printStackTrace();
             }
         }
