@@ -6,11 +6,15 @@ import java.util.Set;
 public class User {
     private List<Tags> userTags;
     private Map<String, Integer> userApps; //hold package names, usage(0-2)
+    private List<String> banList;
+    private List<String> interestedList;
 
 
     public User(List<Tags> tags, Map<String, Integer> userAppsInstalled) {
         this.userTags = tags;
         this.userApps = userAppsInstalled;
+        banList = new ArrayList<>();
+        interestedList = new ArrayList<>();
 
     }
     /*
@@ -35,6 +39,16 @@ public class User {
         }
         return uncommonApps;
 
+    }
+
+    //adds to the ban list
+    public void addElementToBanList(String name){
+        banList.add(name);
+    }
+
+    //adds to the interested list
+    public void addElementToInterestedList(String name){
+        interestedList.add(name);
     }
 
 }
