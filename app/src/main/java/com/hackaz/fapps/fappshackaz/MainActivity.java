@@ -442,7 +442,8 @@ public class MainActivity extends AppCompatActivity {
             new Thread(new SendMessage("DOWNLD, 1"));
             int numApps = Integer.parseInt(in.readLine());
             for (int i = 0; i < numApps; i++) {
-                in.readLine().split(", ");
+                String[] parts = in.readLine().split(", ");
+                apps.put(parts[2], new AppNode(parts[0], parts[1]));
             }
         } catch (Exception e) {
             System.out.println("No previous appdata found. Creating new data.");
