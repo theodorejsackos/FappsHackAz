@@ -1,4 +1,4 @@
-package com.lorentzos.flingswipe;
+package com.hackaz.fapps.fappshackaz;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
