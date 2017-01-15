@@ -264,9 +264,10 @@ public class MainActivity extends AppCompatActivity {
                 OutputStream os = conn.getOutputStream();
                 PrintWriter out = new PrintWriter(os,true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                out.write("HELLO OUT THERE!");  //write the message to output stream
+                out.write("HELLO OUT THERE!\n");  //write the message to output stream
                 out.flush();
-                Log.d("echo_from_server: ", in.readLine());
+                String echo = in.readLine();
+                Log.d("echo_from_server: ", echo);
                 out.close();
                 conn.close();   //closing the connection
             } catch (Exception e) {
