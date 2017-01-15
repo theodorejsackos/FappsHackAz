@@ -367,9 +367,10 @@ public class MainActivity extends AppCompatActivity {
 
     //gets first app of the list's name
     private String getUserAppNamesAtBeginning() {
-        ApplicationInfo ai = null;
-        String result = "";
-        return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+//        ApplicationInfo ai = null;
+//        String result = "";
+//        return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+        return sug.getSuggestedApps().get(0);
     }
 
     private class ProfileNode implements Serializable{
