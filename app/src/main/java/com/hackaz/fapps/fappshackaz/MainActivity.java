@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -371,6 +372,8 @@ public class MainActivity extends AppCompatActivity {
         return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
     }
 
-
-
+    private class ProfileNode implements Serializable{
+        public UserDemographic ud;
+        public TradeCraft tc;
+    }
 }
