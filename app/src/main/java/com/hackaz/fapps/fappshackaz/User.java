@@ -50,5 +50,11 @@ public class User {
     public void addElementToInterestedList(String name){
         interestedList.add(name);
     }
+    public List<String> getAppsList(){
+        List<String> result = new ArrayList<String>();
+        for (String s: userApps.keySet())
+            result.add(s);
+        return result;
+    }
 
 }
