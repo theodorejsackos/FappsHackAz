@@ -3,6 +3,7 @@ package com.hackaz.fapps.fappshackaz;
 import android.annotation.TargetApi;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -21,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -75,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
 
-        // BEN'S package name -> icon -> bitmap -> string -> (server -> phone) -> bitmap -> display
+        // BEN'S package name -> icon -> bitmap -> string -> (server -> phone) -> bitmap -> dis2play
         try {
-            Drawable icon = pm.getApplicationIcon("com.hackaz.fapps.fappshackaz");
+            Drawable icon = pm.getApplicationIcon(sug.getSuggestedApps().get(0));
 
             Bitmap b1 = drawableToBitmap(icon);
             String s1 = encodeToBase64(b1);
@@ -103,6 +105,23 @@ public class MainActivity extends AppCompatActivity {
 //            Log.d("SEND_SERIAL", "Failed to serialize and send ProfileNode sample");
 //        }
     }
+
+    // FOR THE NEXT BUTTON
+    public void firstSuggestedToIcon(String packageName) {
+        try {
+            Drawable icon = pm.getApplicationIcon("com.hackaz.fapps.fappshackaz");
+
+            Bitmap b1 = drawableToBitmap(icon);
+            String s1 = encodeToBase64(b1);
+            Bitmap b2 = decodeBase64(s1);
+
+            ((ImageView) findViewById(R.id.image_area)).setImageBitmap(b2);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     /** Called when the user clicks on the button */
     public void lookup_apps(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
@@ -522,12 +541,19 @@ public class MainActivity extends AppCompatActivity {
     //dislike button will save app information into a personal dislike list
     //also removes from the suggested apps list
     public void onClickDislikeButton(View v){
-        tv = (TextView)findViewById(R.id.description);
         if(sug.getSuggestedApps().size() == 0){
-            tv.setText("No apps left to suggest :^)");
             return;
         }
         sug.currentUser.addElementToBanList(sug.getSuggestedApps().get(0)); //add string value
+
+        //display Toast message
+        Context context = getApplicationContext();
+        CharSequence text = "Added to Dislike List!";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
         sug.getSuggestedApps().remove(0);
         displayDescription();
     }
@@ -535,9 +561,7 @@ public class MainActivity extends AppCompatActivity {
     //download button will take you to the play store
     //also removes from the suggested apps list
     public void onClickDownloadButton(View v){
-        tv = (TextView)findViewById(R.id.description);
         if(sug.getSuggestedApps().size() == 0){
-            tv.setText("No apps left to suggest :(");
             return;
         }
         String temp = sug.getSuggestedApps().get(0); //gets that element
@@ -550,30 +574,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //next button
-    public void onClickNextButton(View v){
-        tv = (TextView)findViewById(R.id.description);
+    public void onClickNextButton1(View v){
         if(sug.getSuggestedApps().size() == 0){
-            tv.setText("No apps left to suggest :(");
             return;
         }
         String temp = sug.getSuggestedApps().get(0); //gets that element
         sug.getSuggestedApps().remove(0);
         sug.getSuggestedApps().add(temp); //adds to the back of the lsit
-        displayDescription();
+        this.firstSuggestedToIcon(sug.getSuggestedApps().get(0));
     }
 
-    //display descipriton and titles
+    //goes to app store
     public void displayDescription(){
-
-
-
-    Intent intent = new Intent(Intent.ACTION_VIEW);
-    intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
-    startActivity(intent);
-
-    tv = (TextView)findViewById(R.id.description); //gets specific textview box;
-    tv.setText(this.getUserAppNamesAtBeginning() + "\n");
-}
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
+        startActivity(intent);
+    }
 
     //gets first app of the list's name
     private String getUserAppNamesAtBeginning() {
