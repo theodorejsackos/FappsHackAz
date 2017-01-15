@@ -69,8 +69,13 @@ public class MainActivity extends AppCompatActivity {
         apps = new HashMap<String,AppNode>();
         initializeApps();
         sendUserData();
-        getSuggestions();
-
+        int flags = GET_META_DATA |
+                GET_SHARED_LIBRARY_FILES;
+        try {((TextView) findViewById(R.id.textView2)).setText(pm.getApplicationLabel(pm.getApplicationInfo(getSuggestions().get(0), flags)).toString()); }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.firstSuggestedToIcon( getSuggestions().get(0));
         // THEODORE'S DISPLAY ICON CODE
 //        try {
 //            Drawable icon = pm.getApplicationIcon("com.groupme.android");
@@ -611,6 +616,12 @@ public class MainActivity extends AppCompatActivity {
         stringies.remove(curr);
         stringies.add(curr); //adds to the back of the lsit
         this.firstSuggestedToIcon(stringies.get(0));
+        int flags = GET_META_DATA |
+                GET_SHARED_LIBRARY_FILES;
+        try {((TextView) findViewById(R.id.textView2)).setText(pm.getApplicationLabel(pm.getApplicationInfo(stringies.get(0), flags)).toString()); }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //goes to app store
