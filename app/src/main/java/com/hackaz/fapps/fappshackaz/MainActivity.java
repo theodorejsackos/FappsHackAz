@@ -12,9 +12,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-import android.view.MotionEvent;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
@@ -23,7 +24,6 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         getSuggestions();
 
         try {
-            Drawable icon = pm.getApplicationIcon("com.groupme.android");
+            Drawable icon = pm.getApplicationIcon("com.google.android.apps.maps");
             findViewById(R.id.image_area).setBackgroundDrawable(icon);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -380,20 +380,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
-
-
-    //like button will save app information into a personal like list?
-    //also removes from the suggested apps list
-    public void onClickLikeButton(View v){
-        tv = (TextView)findViewById(R.id.description);
-        if(sug.getSuggestedApps().size() == 0){
-            tv.setText("No apps left to suggest :(");
-            return;
-        }
-        sug.currentUser.addElementToInterestedList(sug.getSuggestedApps().get(0)); //add string value
-        sug.getSuggestedApps().remove(0);
-        displayDescription();
     }
 
     //dislike button will save app information into a personal dislike list
