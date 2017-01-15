@@ -1,4 +1,4 @@
-package com.lorentzos.flingswipe;
+package com.hackaz.fapps.fappshackaz;
 
 import android.annotation.TargetApi;
 import android.content.Context;
