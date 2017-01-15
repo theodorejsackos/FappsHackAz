@@ -460,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
                 AppNode a = new AppNode(s1, pm.getApplicationLabel(appInfo).toString(), appInfo.loadDescription(pm).toString());
                 apps.put(s, a);
                 System.out.println(s1 + ", " + pm.getApplicationLabel(appInfo).toString() + ", " + appInfo.loadDescription(pm).toString());
-                new Thread(new SendMessage(s1 + ", " + pm.getApplicationLabel(appInfo).toString() + ", " + appInfo.loadDescription(pm).toString()));
+                new Thread(new SendMessage(s1 + ", " + pm.getApplicationLabel(appInfo).toString() + ", " + appInfo.loadDescription(pm).toString() + "\n"));
             } // don't need to add app data otherwise.
         }
         try {
