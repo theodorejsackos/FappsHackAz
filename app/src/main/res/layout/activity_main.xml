@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/button3"
         android:layout_weight="0.11"
-        android:onClick="onClickNextButton (MainActivity)" />
+        android:onClick="onClickLikeButton" />
 
     <Button
         android:text="Dislike"

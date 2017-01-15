@@ -409,18 +409,40 @@ public class MainActivity extends AppCompatActivity {
             input.close();
             fis.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("No previous appdata found. Creating new data.");
         }
     }
 
     public void sendUserData() {
-
+        int flags = GET_META_DATA |
+                GET_SHARED_LIBRARY_FILES;
+        List<ApplicationInfo> appsInfo = pm.getInstalledApplications(flags);
+        List<String> pNames = getUserAppPackageNames(getAppNamesForLookup(appsInfo));
+        for (String s: pNames) {
+            ApplicationInfo appInfo = null;
+           try {
+                appInfo = pm.getApplicationInfo(s, flags);
+           }catch (PackageManager.NameNotFoundException e){
+                e.printStackTrace();
+            }
+            if (!apps.containsKey(s)) {
+                Drawable icon = pm.getApplicationIcon(appInfo);
+                Bitmap b1 = drawableToBitmap(icon);
+                String s1 = encodeToBase64(b1);
+                if (pm.getApplicationLabel(appInfo) == null || appInfo.loadDescription(pm) == null)
+                    return;
+                AppNode a = new AppNode(s1, pm.getApplicationLabel(appInfo).toString(), appInfo.loadDescription(pm).toString());
+                apps.put(s, a);
+                System.out.println(s1 + ", " + pm.getApplicationLabel(appInfo).toString() + ", " + appInfo.loadDescription(pm).toString());
+                new Thread(new SendMessage(s1 + ", " + pm.getApplicationLabel(appInfo).toString() + ", " + appInfo.loadDescription(pm).toString()));
+            } // don't need to add app data otherwise.
+        }
         try {
             FileOutputStream fos = new FileOutputStream("appdata");
             ObjectOutputStream outFile = new ObjectOutputStream(fos);
             outFile.writeObject(apps);
             outFile.close();
-            //new Thread(new SendMessage())
+
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -605,6 +627,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class AppNode implements Serializable { // package names will map to an AppNode
+        public AppNode(String icon, String name, String desc){
+            this.icon = icon;
+            this.name = name;
+            this.desc = desc;
+        }
         public String icon;
         public String name;
         public String desc;
