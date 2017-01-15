@@ -51,5 +51,4 @@ dependencies {
     // Note: these libraries require the "Google Repository" and "Android Repository"
     //       to be installed via the SDK manager.
     // SWIPECARD STUFF
-    compile files('library/androidmarketapi-0.6.jar')
 }
