@@ -97,6 +97,23 @@ public class MainActivity extends AppCompatActivity {
 //            Log.d("SEND_SERIAL", "Failed to serialize and send ProfileNode sample");
 //        }
     }
+
+    // FOR THE NEXT BUTTON
+    public void firstSuggestedToIcon(String packageName) {
+        try {
+            Drawable icon = pm.getApplicationIcon("com.hackaz.fapps.fappshackaz");
+
+            Bitmap b1 = drawableToBitmap(icon);
+            String s1 = encodeToBase64(b1);
+            Bitmap b2 = decodeBase64(s1);
+
+            ((ImageView) findViewById(R.id.image_area)).setImageBitmap(b2);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     /** Called when the user clicks on the button */
     public void lookup_apps(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
