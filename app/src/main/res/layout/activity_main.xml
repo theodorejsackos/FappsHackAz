@@ -22,11 +22,17 @@
         android:padding="10dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
+    <ImageView
+        android:id="@+id/image_area"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="128dp"
+        android:layout_height="128dp" />
+
     <TextView
         android:text="Description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/description"
+        android:id="@+id/text_view_description"
         android:layout_weight="0.59" />
 
     <Button

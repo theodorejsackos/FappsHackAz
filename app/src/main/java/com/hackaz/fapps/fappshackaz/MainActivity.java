@@ -14,7 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
+import android.view.MotionEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,9 +52,27 @@ public class MainActivity extends AppCompatActivity {
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         pm = getPackageManager();
         getSuggestions();
-        new Thread(new SendMessage("Hello there buddy!")).start();
-        Log.d("SERVER_CONN", "Message Send in thread");
 
+        try {
+            Drawable icon = pm.getApplicationIcon("com.groupme.android");
+            findViewById(R.id.image_area).setBackgroundDrawable(icon);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        //new Thread(new SendMessage("Hello there buddy!")).start();
+        //Log.d("SERVER_CONN", "Message Send in thread");
+
+//        try {
+//            ProfileNode pn = new ProfileNode();
+//            pn.ud = UserDemographic.STUDENT_UNIVERSITY;
+//            pn.tc = TradeCraft.COMPUTER_SCIENCE;
+//            pn.interests = Arrays.asList(Interests.SOCCER, Interests.PROGRAMMING, Interests.PHILOSOPHY);
+//            new Thread(new SendObject(pn)).start();
+//        }catch(Exception e){
+//            Log.d("SEND_SERIAL", "Failed to serialize and send ProfileNode sample");
+//        }
     }
     /** Called when the user clicks on the button */
     public void lookup_apps(View view) {
@@ -317,6 +336,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private class SendObject implements Runnable {
+        private ProfileNode mMsg;
+
+        public SendObject(ProfileNode msg) {
+            mMsg = msg;
+        }
+        public void run() {
+            try {
+                Socket conn = new Socket("ec2-35-166-192-131.us-west-2.compute.amazonaws.com", 8080);
+                ObjectOutputStream os = new ObjectOutputStream(conn.getOutputStream());
+                os.writeObject(mMsg);  //write the message to output stream
+                os.flush();
+                os.close();
+                conn.close();   //closing the connection
+            } catch (Exception e) {
+                Log.d("FAILED_CONN", e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
     private class SendApps implements Runnable {
         private List<String> mMsg;
 
@@ -386,28 +426,80 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //next button
+    public void onClickNextButton(View v){
+        tv = (TextView)findViewById(R.id.description);
+        if(sug.getSuggestedApps().size() == 0){
+            tv.setText("No apps left to suggest :(");
+            return;
+        }
+        String temp = sug.getSuggestedApps().get(0); //gets that element
+        sug.getSuggestedApps().remove(0);
+        sug.getSuggestedApps().add(temp); //adds to the back of the lsit
+        displayDescription();
+    }
+
     //display descipriton and titles
     public void displayDescription(){
 
 
 
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
+    Intent intent = new Intent(Intent.ACTION_VIEW);
+    intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
+    startActivity(intent);
 
-
-        tv = (TextView)findViewById(R.id.description); //gets specific textview box;
-        tv.setText(this.getUserAppNamesAtBeginning() + "\n");
-    }
+    tv = (TextView)findViewById(R.id.description); //gets specific textview box;
+    tv.setText(this.getUserAppNamesAtBeginning() + "\n");
+}
 
     //gets first app of the list's name
     private String getUserAppNamesAtBeginning() {
-        ApplicationInfo ai = null;
-        String result = "";
-        return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+//        ApplicationInfo ai = null;
+//        String result = "";
+//        return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+        return sug.getSuggestedApps().get(0);
+    }
+    private float x1,x2;
+    static final int MIN_DISTANCE = 150;
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        switch(event.getAction())
+        {
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x2 - x1;
+
+                if (Math.abs(deltaX) > MIN_DISTANCE)
+                {
+                    // Left to Right swipe action
+                    if (x2 > x1)
+                    {
+
+                    }
+
+                    // Right to left swipe action
+                    else
+                    {
+
+                    }
+
+                }
+                else
+                {
+                    // consider as something else - a screen tap for example
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     private class ProfileNode implements Serializable{
         public UserDemographic ud;
         public TradeCraft tc;
+        public List<Interests> interests;
     }
 }
