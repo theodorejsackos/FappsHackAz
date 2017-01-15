@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             try {
                 Log.d("SERVER_CONN", "Reached 1");
-                conn = new Socket("150.135.210.113", 1925);  //connect to server
+                conn = new Socket("192.12.69.186", 1925);  //connect to server
                 Log.d("SERVER_CONN", "Reached 2");
                 out = new PrintWriter(conn.getOutputStream(),true);
                 Log.d("SERVER_CONN", "Reached 3");
