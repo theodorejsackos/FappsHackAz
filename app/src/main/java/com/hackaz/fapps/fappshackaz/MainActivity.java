@@ -70,9 +70,9 @@ public class MainActivity extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
 
-        // BEN'S package name -> icon -> bitmap -> string -> (server -> phone) -> bitmap -> display
+        // BEN'S package name -> icon -> bitmap -> string -> (server -> phone) -> bitmap -> dis2play
         try {
-            Drawable icon = pm.getApplicationIcon("com.hackaz.fapps.fappshackaz");
+            Drawable icon = pm.getApplicationIcon(sug.getSuggestedApps().get(0));
 
             Bitmap b1 = drawableToBitmap(icon);
             String s1 = encodeToBase64(b1);
@@ -513,9 +513,9 @@ public class MainActivity extends AppCompatActivity {
         String temp = sug.getSuggestedApps().get(0); //gets that element
         sug.getSuggestedApps().remove(0);
         try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.google.android.apps.maps")));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + temp)));
         } catch (android.content.ActivityNotFoundException anfe) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + "com.google.android.apps.maps")));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + temp)));
         }
     }
 
@@ -527,15 +527,15 @@ public class MainActivity extends AppCompatActivity {
         String temp = sug.getSuggestedApps().get(0); //gets that element
         sug.getSuggestedApps().remove(0);
         sug.getSuggestedApps().add(temp); //adds to the back of the lsit
-        displayDescription();
+        this.firstSuggestedToIcon(sug.getSuggestedApps().get(0));
     }
 
-    //display descipriton and titles
+    //goes to app store
     public void displayDescription(){
-    Intent intent = new Intent(Intent.ACTION_VIEW);
-    intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
-    startActivity(intent);
-}
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
+        startActivity(intent);
+    }
 
     //gets first app of the list's name
     private String getUserAppNamesAtBeginning() {
