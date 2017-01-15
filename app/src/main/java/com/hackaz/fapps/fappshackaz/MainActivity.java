@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
 import static android.content.pm.PackageManager.GET_META_DATA;
 import static android.content.pm.PackageManager.GET_SHARED_LIBRARY_FILES;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Serializable {
     public final static String EXTRA_MESSAGE = "com.fapps.hackaz.MESSAGE";
     private Suggestor sug;
     private TextView tv;
@@ -52,6 +53,16 @@ public class MainActivity extends AppCompatActivity {
         getSuggestions();
         new Thread(new SendMessage("Hello there buddy!")).start();
         Log.d("SERVER_CONN", "Message Send in thread");
+
+//        try {
+//            ProfileNode pn = new ProfileNode();
+//            pn.ud = UserDemographic.STUDENT_UNIVERSITY;
+//            pn.tc = TradeCraft.COMPUTER_SCIENCE;
+//            pn.interests = Arrays.asList(Interests.SOCCER, Interests.PROGRAMMING, Interests.PHILOSOPHY);
+//            new Thread(new SendObject(pn)).start();
+//        }catch(Exception e){
+//            Log.d("SEND_SERIAL", "Failed to serialize and send ProfileNode sample");
+//        }
     }
     /** Called when the user clicks on the button */
     public void lookup_apps(View view) {
@@ -283,6 +294,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private class SendObject implements Runnable {
+        private ProfileNode mMsg;
+
+        public SendObject(ProfileNode msg) {
+            mMsg = msg;
+        }
+        public void run() {
+            try {
+                Socket conn = new Socket("ec2-35-166-192-131.us-west-2.compute.amazonaws.com", 8080);
+                ObjectOutputStream os = new ObjectOutputStream(conn.getOutputStream());
+                os.writeObject(mMsg);  //write the message to output stream
+                os.flush();
+                os.close();
+                conn.close();   //closing the connection
+            } catch (Exception e) {
+                Log.d("FAILED_CONN", e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
     private class SendApps implements Runnable {
         private List<String> mMsg;
 
@@ -375,5 +407,6 @@ public class MainActivity extends AppCompatActivity {
     private class ProfileNode implements Serializable{
         public UserDemographic ud;
         public TradeCraft tc;
+        public List<Interests> interests;
     }
 }
