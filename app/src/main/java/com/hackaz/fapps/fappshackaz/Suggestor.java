@@ -29,7 +29,7 @@ public class Suggestor {
 
         Map<String, Integer> apps1 = new HashMap<String, Integer>();
         //apps1.put("Terminal", 1);
-        apps1.put("com.Facebook.katana)", 2);
+        apps1.put("com.crowdstar.covetfashion", 2);
         //apps1.put("Tinder", 2);
         apps1.put("com.hackaz.fapps.fappshackaz", 2);
         //apps1.put("Testing", 0);
