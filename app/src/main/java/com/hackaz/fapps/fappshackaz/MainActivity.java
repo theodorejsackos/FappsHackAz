@@ -15,6 +15,7 @@ import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -83,7 +84,9 @@ public class MainActivity extends AppCompatActivity {
         result += "Suggested apps: \n";
         List<String> sugpnames = getSuggestions();
         for (String s: sugpnames)
-                result += s + "\n";
+            result += s + "\n";
+        //    new Thread(new SendMessage(userPackageNames)).start();
+
         //editText.setText(result); //This seems to work,
         intent.putExtra(EXTRA_MESSAGE, result);
         startActivity(intent);
@@ -277,6 +280,32 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private class SendApps implements Runnable {
+        private List<String> mMsg;
+
+        public SendApps(List<String> msg) {
+            mMsg = msg;
+        }
+        public void run() {
+            try {
+                Socket conn = new Socket("ec2-35-162-158-36.us-west-2.compute.amazonaws.com", 8080);
+                OutputStream os = conn.getOutputStream();
+                ObjectOutputStream out = new ObjectOutputStream(os);
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                out.writeObject(mMsg);  //write the list of apps to output stream
+                out.flush();
+                String echo = in.readLine();
+                Log.d("echo_from_server: ", echo);
+                out.close();
+                conn.close();   //closing the connection
+            } catch (Exception e) {
+                Log.d("FAILED_CONN", e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     private float x1,x2;
     static final int MIN_DISTANCE = 150;
