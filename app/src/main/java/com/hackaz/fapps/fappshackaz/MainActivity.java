@@ -352,6 +352,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //next button
+    public void onClickNextButton(View v){
+        tv = (TextView)findViewById(R.id.description);
+        if(sug.getSuggestedApps().size() == 0){
+            tv.setText("No apps left to suggest :(");
+            return;
+        }
+        String temp = sug.getSuggestedApps().get(0); //gets that element
+        sug.getSuggestedApps().remove(0);
+        sug.getSuggestedApps().add(temp); //adds to the back of the lsit
+        displayDescription();
+    }
+
     //display descipriton and titles
     public void displayDescription(){
 
