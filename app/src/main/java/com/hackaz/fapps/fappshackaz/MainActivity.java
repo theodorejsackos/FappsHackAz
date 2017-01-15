@@ -7,11 +7,12 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -21,9 +22,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +33,8 @@ import static android.content.pm.PackageManager.GET_SHARED_LIBRARY_FILES;
 
 public class MainActivity extends AppCompatActivity {
     public final static String EXTRA_MESSAGE = "com.fapps.hackaz.MESSAGE";
+    private Suggestor sug;
+    private TextView tv;
     PackageManager pm = null;
 
     PrintWriter out = null;
@@ -83,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         result += "Suggested apps: \n";
         List<String> sugpnames = getSuggestions();
         for (String s: sugpnames)
-                result += s + "\n";
+            result += s + "\n";
         //editText.setText(result); //This seems to work,
         intent.putExtra(EXTRA_MESSAGE, result);
         startActivity(intent);
@@ -249,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                 userPackageNames.put(packageName, getAppUsage(packageName));
             }
         }
-        Suggestor sug = new Suggestor(tags, userPackageNames);
+        sug = new Suggestor(tags, userPackageNames);
         return sug.getSuggestedApps();
     }
 
@@ -265,56 +268,67 @@ public class MainActivity extends AppCompatActivity {
                 OutputStream os = conn.getOutputStream();
                 PrintWriter out = new PrintWriter(os,true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                out.write(mMsg + "\n");  //write the message to output stream
+                out.write("HELLO OUT THERE!\n");  //write the message to output stream
                 out.flush();
                 String echo = in.readLine();
                 Log.d("echo_from_server: ", echo);
                 out.close();
                 conn.close();   //closing the connection
             } catch (Exception e) {
-                Log.d("FAILED_CONN", e.getMessage());
+                Log.d("FAILED_CONN", "\n\n\nHERE->>>" + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
 
-    private float x1,x2;
-    static final int MIN_DISTANCE = 150;
-    @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        switch(event.getAction())
-        {
-            case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
-                break;
-            case MotionEvent.ACTION_UP:
-                x2 = event.getX();
-                float deltaX = x2 - x1;
+    //like button will save app information into a personal like list?
+    //also removes from the suggested apps list
+    public void onClickLikeButton(View v){
+        sug.currentUser.addElementToInterestedList(sug.getSuggestedApps().get(0)); //add string value
+        sug.getSuggestedApps().remove(0);
+        displayDescription();
+    }
 
-                if (Math.abs(deltaX) > MIN_DISTANCE)
-                {
-                    // Left to Right swipe action
-                    if (x2 > x1)
-                    {
-                        new Thread(new SendMessage("Right Swiffer Sweeper!")).start();
-                        Log.d("SERVER_CONN", "Message Send in thread");
-                    }
+    //dislike button will save app information into a personal dislike list
+    //also removes from the suggested apps list
+    public void onClickDislikeButton(View v){
+        sug.currentUser.addElementToBanList(sug.getSuggestedApps().get(0)); //add string value
+        sug.getSuggestedApps().remove(0);
+        displayDescription();
+    }
 
-                    // Right to left swipe action
-                    else
-                    {
-                        new Thread(new SendMessage("Left Window Swiper!")).start();
-                        Log.d("SERVER_CONN", "Message Send in thread");
-                    }
-
-                }
-                else
-                {
-                    // consider as something else - a screen tap for example
-                }
-                break;
+    //download button will take you to the play store
+    //also removes from the suggested apps list
+    public void onClickDownloadButton(View v){
+        String temp = sug.getSuggestedApps().get(0); //gets that element
+        sug.getSuggestedApps().remove(0);
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + temp)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + temp)));
         }
-        return super.onTouchEvent(event);
+    }
+
+    //display descipriton and titles
+    public void displayDescription(){
+
+        PackageManager pm = getPackageManager();
+        ApplicationInfo appInfo = null;
+        try {
+            appInfo = pm.getApplicationInfo(sug.getSuggestedApps().get(0), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String des = appInfo.loadDescription(pm).toString();
+
+        tv = (TextView)findViewById(R.id.description); //gets specific textview box;
+        tv.setText(this.getUserAppNamesAtBeginning() + "\n" + des);
+    }
+
+    //gets first app of the list's name
+    private String getUserAppNamesAtBeginning() {
+        ApplicationInfo ai = null;
+        String result = "";
+        return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
     }
 }
