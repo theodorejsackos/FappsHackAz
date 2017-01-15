@@ -7,14 +7,12 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.net.Uri;
-import android.widget.TextView;
-
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,9 +22,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -88,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         result += "Suggested apps: \n";
         List<String> sugpnames = getSuggestions();
         for (String s: sugpnames)
-                result += s + "\n";
+            result += s + "\n";
         //editText.setText(result); //This seems to work,
         intent.putExtra(EXTRA_MESSAGE, result);
         startActivity(intent);
@@ -325,5 +323,12 @@ public class MainActivity extends AppCompatActivity {
 
         tv = (TextView)findViewById(R.id.description); //gets specific textview box;
         tv.setText(this.getUserAppNamesAtBeginning() + "\n" + des);
+    }
+
+    //gets first app of the list's name
+    private String getUserAppNamesAtBeginning() {
+        ApplicationInfo ai = null;
+        String result = "";
+        return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
     }
 }
