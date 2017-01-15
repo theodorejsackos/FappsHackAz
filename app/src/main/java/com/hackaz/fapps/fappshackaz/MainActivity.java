@@ -354,17 +354,14 @@ public class MainActivity extends AppCompatActivity {
     //display descipriton and titles
     public void displayDescription(){
 
-        PackageManager pm = getPackageManager();
-        ApplicationInfo appInfo = null;
-        try {
-            appInfo = pm.getApplicationInfo(sug.getSuggestedApps().get(0), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            //appInfo = sug.getSuggestedApps().get(0);
-        }
-        String des = appInfo.loadDescription(pm).toString();
+
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("market://details?id=" + sug.getSuggestedApps().get(0)));
+
 
         tv = (TextView)findViewById(R.id.description); //gets specific textview box;
-        tv.setText(this.getUserAppNamesAtBeginning() + "\n" + des);
+        tv.setText(this.getUserAppNamesAtBeginning() + "\n");
     }
 
     //gets first app of the list's name
