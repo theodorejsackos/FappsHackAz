@@ -30,11 +30,11 @@ public class Suggestor {
         Map<String, Integer> apps1 = new HashMap<String, Integer>();
         //apps1.put("Terminal", 1);
 
-        apps1.put("com.crowdstar.covetfashion", 2);
+        apps1.put("com.quora.android", 2);
         //apps1.put("Tinder", 2);
         apps1.put("com.hackaz.fapps.fappshackaz", 2);
         //apps1.put("Testing", 0);
-        apps1.put("com.android.calculator2", 1);
+        //apps1.put("com.android.calculator2", 1);
 
         User testUser = new User(tags1, apps1);
         users.add(testUser);
@@ -43,9 +43,9 @@ public class Suggestor {
         tags1.add(Tags.BASKETBALL);
         tags1.add(Tags.BUSINESS);
         Map<String, Integer> apps2 = new HashMap<String, Integer>();
-        apps2.put("com.breel.geswallpapers", 1);
-        apps2.put("com.svox.pico", 2);
-        apps2.put("com.ustwo.lwp", 2);
+        //apps2.put("com.breel.geswallpapers", 1);
+        //apps2.put("com.svox.pico", 1);
+        //apps2.put("com.ustwo.lwp", 1);
         //apps2.put("com.hackaz.fapps.fappshackaz", 0);
         User testUser2 = new User(tags1, apps2);
         users.add(testUser2);
@@ -61,10 +61,12 @@ public class Suggestor {
         HashMap<String, Integer> suggestedApps = new HashMap<String, Integer>();
         for (User otherUser: users) {
             int similarTagCount = this.currentUser.getSimilarTags(otherUser.getTags()).size();
-            List<String> otherUserApps = this.currentUser.getUncommonAppsFromOtherUser(otherUser.getInstalledAppNames().keySet());
+            //List<String> otherUserApps = this.currentUser.getUncommonAppsFromOtherUser(otherUser.getInstalledAppNames().keySet());
+            List<String> otherUserApps = this.currentUser.getAppsList();
             for (String appName: otherUserApps) {
-                int usageMultiplier = otherUser.getInstalledAppNames().get(appName);
-                if (!suggestedApps.containsKey(appName)) {
+                //int usageMultiplier = otherUser.getInstalledAppNames().get(appName);
+                int usageMultiplier = this.currentUser.getInstalledAppNames().get(appName);
+                if (!suggestedApps.containsKey(appName)) { // PUT ! BACK IN!!!!!!!
                     suggestedApps.put(appName, similarTagCount * usageMultiplier);
                 } else {
                     suggestedApps.put(appName, similarTagCount * usageMultiplier + suggestedApps.get(appName));

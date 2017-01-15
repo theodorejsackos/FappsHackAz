@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private Suggestor sug;
     private TextView tv;
     PackageManager pm = null;
+    List<String> stringies = null;
+
     private Map<String,AppNode> apps;
     PrintWriter out = null;
     BufferedReader in = null;
@@ -78,18 +80,18 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
         // BEN'S package name -> icon -> bitmap -> string -> (server -> phone) -> bitmap -> dis2play
-        try {
-            Drawable icon = pm.getApplicationIcon(sug.getSuggestedApps().get(0));
-
-            Bitmap b1 = drawableToBitmap(icon);
-            String s1 = encodeToBase64(b1);
-            Bitmap b2 = decodeBase64(s1);
-
-            ((ImageView) findViewById(R.id.image_area)).setImageBitmap(b2);
-
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Drawable icon = pm.getApplicationIcon(sug.getSuggestedApps().get(0));
+//
+//            Bitmap b1 = drawableToBitmap(icon);
+//            String s1 = encodeToBase64(b1);
+//            Bitmap b2 = decodeBase64(s1);
+//
+//            ((ImageView) findViewById(R.id.image_area)).setImageBitmap(b2);
+//
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
 
         //new Thread(new SendMessage("Hello there buddy!")).start();
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     // FOR THE NEXT BUTTON
     public void firstSuggestedToIcon(String packageName) {
         try {
-            Drawable icon = pm.getApplicationIcon("com.hackaz.fapps.fappshackaz");
+            Drawable icon = pm.getApplicationIcon(packageName);
 
             Bitmap b1 = drawableToBitmap(icon);
             String s1 = encodeToBase64(b1);
@@ -542,6 +544,13 @@ public class MainActivity extends AppCompatActivity {
     //also removes from the suggested apps list
     public void onClickDislikeButton(View v){
         if(sug.getSuggestedApps().size() == 0){
+            //display Toast message
+            Context context = getApplicationContext();
+            CharSequence text = "You've reached the end of your suggestions! Please purchase premium to receive more";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
             return;
         }
         sug.currentUser.addElementToBanList(sug.getSuggestedApps().get(0)); //add string value
@@ -554,34 +563,54 @@ public class MainActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
 
-        sug.getSuggestedApps().remove(0);
-        displayDescription();
+        stringies.remove(0);
+        if(sug.getSuggestedApps().size() == 0){
+            //display Toast message
+            Context context2 = getApplicationContext();
+            CharSequence text2 = "You've reached the end of your suggestions! Please purchase premium to receive more";
+            int duration2 = Toast.LENGTH_SHORT;
+
+            Toast toast2 = Toast.makeText(context2, text2, duration2);
+            toast2.show();
+            return;
+        }
+
+        this.firstSuggestedToIcon(stringies.get(0));
     }
 
     //download button will take you to the play store
     //also removes from the suggested apps list
     public void onClickDownloadButton(View v){
-        if(sug.getSuggestedApps().size() == 0){
+        if(stringies == null)
+            stringies = sug.getSuggestedApps();
+
+        if(stringies.size() == 0){
+            Log.d("        Boo hoo:", "qqq");
             return;
         }
-        String temp = sug.getSuggestedApps().get(0); //gets that element
-        sug.getSuggestedApps().remove(0);
+        String curr = stringies.get(0); //gets that element
+        Log.d("        CHECK ME OUT: ", curr);
         try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + temp)));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + curr)));
         } catch (android.content.ActivityNotFoundException anfe) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + temp)));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + curr)));
         }
     }
 
     //next button
     public void onClickNextButton1(View v){
-        if(sug.getSuggestedApps().size() == 0){
+        if(stringies == null)
+            stringies = sug.getSuggestedApps();
+
+        if(stringies.size() == 0){
+            Log.d("        Boo hoo:", "qqq");
             return;
         }
-        String temp = sug.getSuggestedApps().get(0); //gets that element
-        sug.getSuggestedApps().remove(0);
-        sug.getSuggestedApps().add(temp); //adds to the back of the lsit
-        this.firstSuggestedToIcon(sug.getSuggestedApps().get(0));
+        String curr = stringies.get(0); //gets that element
+        Log.d("        CHECK ME OUT: ", curr);
+        stringies.remove(curr);
+        stringies.add(curr); //adds to the back of the lsit
+        this.firstSuggestedToIcon(stringies.get(0));
     }
 
     //goes to app store
