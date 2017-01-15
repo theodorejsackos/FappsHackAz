@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.net.Uri;
+import android.widget.TextView;
 
 import android.view.View;
 
@@ -32,6 +34,8 @@ import static android.content.pm.PackageManager.GET_SHARED_LIBRARY_FILES;
 
 public class MainActivity extends AppCompatActivity {
     public final static String EXTRA_MESSAGE = "com.fapps.hackaz.MESSAGE";
+    private Suggestor sug;
+    private TextView tv;
     PackageManager pm = null;
 
     PrintWriter out = null;
@@ -114,6 +118,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return result;
+    }
+
+    public String getUserAppNamesAtBeginning() {
+        ApplicationInfo ai = null;
+        String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+        return applicationName;
     }
 
     /**
@@ -249,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                 userPackageNames.put(packageName, getAppUsage(packageName));
             }
         }
-        Suggestor sug = new Suggestor(tags, userPackageNames);
+        sug = new Suggestor(tags, userPackageNames);
         return sug.getSuggestedApps();
     }
 
@@ -276,5 +286,49 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    //like button will save app information into a personal like list?
+    //also removes from the suggested apps list
+    public void onClickLikeButton(View v){
+        sug.currentUser.addElementToInterestedList(sug.getSuggestedApps().get(0)); //add string value
+        sug.getSuggestedApps().remove(0);
+        displayDescription();
+    }
+
+    //dislike button will save app information into a personal dislike list
+    //also removes from the suggested apps list
+    public void onClickDislikeButton(View v){
+        sug.currentUser.addElementToBanList(sug.getSuggestedApps().get(0)); //add string value
+        sug.getSuggestedApps().remove(0);
+        displayDescription();
+    }
+
+    //download button will take you to the play store
+    //also removes from the suggested apps list
+    public void onClickDownloadButton(View v){
+        String temp = sug.getSuggestedApps().get(0); //gets that element
+        sug.getSuggestedApps().remove(0);
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + temp)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + temp)));
+        }
+    }
+
+    //display descipriton and titles
+    public void displayDescription(){
+
+        PackageManager pm = getPackageManager();
+        ApplicationInfo appInfo = null;
+        try {
+            appInfo = pm.getApplicationInfo(sug.getSuggestedApps().get(0), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String des = appInfo.loadDescription(pm).toString();
+
+        tv = (TextView)findViewById(R.id.description); //gets specific textview box;
+        tv.setText(this.getUserAppNamesAtBeginning() + "\n" + des);
     }
 }

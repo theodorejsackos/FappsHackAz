@@ -5,7 +5,7 @@
 
     <Button
         android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
+        android:layout_weight="0.11"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:layout_width="wrap_content"
@@ -13,13 +13,45 @@
         android:text="@string/button_send"
         android:onClick="lookup_apps"/>
 
-    <EditText android:id="@+id/edit_message"
-        android:layout_weight="7"
+    <TextView
+        android:text="Interested in this app?"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/edit_message"
-        android:inputType="none"
-        />
+        android:id="@+id/textView2"
+        android:layout_weight="0.08"
+        android:padding="10dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+    <TextView
+        android:text="Description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/description"
+        android:layout_weight="0.59" />
+
+    <Button
+        android:text="Like"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button3"
+        android:layout_weight="0.11"
+        android:onClick="onClickLikeButton" />
+
+    <Button
+        android:text="Dislike"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button7"
+        android:layout_weight="0.11"
+        android:onClick="onClickDislikeButton" />
+
+    <Button
+        android:text="Download"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button2"
+        android:layout_weight="0.11"
+        android:onClick="onClickDownloadButton" />
 
 </LinearLayout>
 
