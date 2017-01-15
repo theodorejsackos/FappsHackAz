@@ -1,5 +1,8 @@
 package com.hackaz.fapps.fappshackaz;
 
+import android.annotation.TargetApi;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -10,7 +13,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -23,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     public final static String EXTRA_MESSAGE = "com.fapps.hackaz.MESSAGE";
     PackageManager pm = null;
 
+    PrintWriter out = null;
+    BufferedReader in = null;
+    Socket conn = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,11 +41,14 @@ public class MainActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         pm = getPackageManager();
+
+        new Thread(new SendMessage("Hello there buddy!")).start();
+        Log.d("SERVER_CONN", "Message Send in thread");
     }
     /** Called when the user clicks on the button */
     public void lookup_apps(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.edit_message);
+        //EditText editText = (EditText) findViewById(R.id.edit_message);
 
         // (01) TRY GETTING USER-INSTALLED APPS (01)
         int flags = GET_META_DATA |
@@ -99,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Called by getUserAppNames, uses regex to check if APK directory path is in system/ or data/
      * @param path
-     * @return
+     * @return boolean
      */
     public boolean isSystemDir(String path) {
         Pattern p = Pattern.compile("/system.*");
@@ -122,13 +136,13 @@ public class MainActivity extends AppCompatActivity {
     public boolean isSystemApp(String packageName) {
         try {
             PackageManager pm = getPackageManager(); // get package manager
-            // Get packageinfo for target application
+            // Get package info for target application
             PackageInfo targetPkgInfo = pm.getPackageInfo(
                     packageName, PackageManager.GET_SIGNATURES);
-            // Get packageinfo for system package
+            // Get package info for system package
             PackageInfo sys = pm.getPackageInfo(
                     "android", PackageManager.GET_SIGNATURES);
-            // Match both packageinfo for there signatures
+            // Match both package info for there signatures
             return (targetPkgInfo != null && targetPkgInfo.signatures != null && sys.signatures[0]
                     .equals(targetPkgInfo.signatures[0]));
         } catch (PackageManager.NameNotFoundException e) {
@@ -161,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 && pm.getLaunchIntentForPackage(packageName) != null
                 && (ai.flags & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0) {
             // Check if signature matches
-            if (isSystemApp(packageName) == true) {
+            if (isSystemApp(packageName)) {
                 return true;
             } else {
                 return false;
@@ -185,5 +199,59 @@ public class MainActivity extends AppCompatActivity {
         return appNames;
     }
 
+    /*Methods to get user stats on applications */
 
+    /** Get usage rating for the given package name (a particular app)
+     * 0 - App is not used
+     * 1 - App is used
+     * 2 - App is heavily used
+     */
+    @TargetApi(25)
+    public int getAppUsage(String packageName){
+        Calendar rightNow = Calendar.getInstance();
+        Calendar recentHist = Calendar.getInstance();
+        recentHist.add(Calendar.DAY_OF_YEAR, -1);
+
+        UsageStatsManager usm = (UsageStatsManager) this.getSystemService(this.USAGE_STATS_SERVICE);
+        List<UsageStats> usageStats  = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, recentHist.getTimeInMillis(), rightNow.getTimeInMillis());
+
+        for(UsageStats us : usageStats){
+            if(us.getPackageName().equals(packageName)){
+                long usage = us.getTotalTimeInForeground();
+                if(usage > 3600000)
+                    return 2;
+                if(usage > 600000)
+                    return 1;
+                else
+                    return 0;
+            }
+        }
+        return 0;
+    }
+
+    private class SendMessage implements Runnable {
+        private String mMsg;
+
+        public SendMessage(String msg) {
+            mMsg = msg;
+        }
+        public void run() {
+            try {
+                Log.d("SERVER_CONN", "Reached 1");
+                conn = new Socket("192.12.69.186", 1925);  //connect to server
+                Log.d("SERVER_CONN", "Reached 2");
+                out = new PrintWriter(conn.getOutputStream(),true);
+                Log.d("SERVER_CONN", "Reached 3");
+                in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                out.write(mMsg);  //write the message to output stream
+                out.close();
+                conn.close();   //closing the connection
+
+                Log.d("SERVER_CONN", "(In thread) Message sent");
+            } catch (Exception e) {
+                Log.d("SERVER_CONN", "FAILURE");
+                e.printStackTrace();
+            }
+        }
+    }
 }
