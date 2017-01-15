@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
         }
         public void run() {
             try {
-                Socket conn = new Socket("ec2-35-162-158-36.us-west-2.compute.amazonaws.com", 8080);
+                Socket conn = new Socket("ec2-35-166-192-131.us-west-2.compute.amazonaws.com", 8080);
                 OutputStream os = conn.getOutputStream();
                 PrintWriter out = new PrintWriter(os,true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
