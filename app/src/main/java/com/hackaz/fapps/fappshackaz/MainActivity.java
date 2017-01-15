@@ -7,16 +7,23 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -60,9 +67,24 @@ public class MainActivity extends AppCompatActivity {
         sendUserData();
         getSuggestions();
 
+        // THEODORE'S DISPLAY ICON CODE
+//        try {
+//            Drawable icon = pm.getApplicationIcon("com.groupme.android");
+//            findViewById(R.id.image_area).setBackgroundDrawable(icon);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+
+        // BEN'S package name -> icon -> bitmap -> string -> (server -> phone) -> bitmap -> display
         try {
-            Drawable icon = pm.getApplicationIcon("com.groupme.android");
-            findViewById(R.id.image_area).setBackgroundDrawable(icon);
+            Drawable icon = pm.getApplicationIcon("com.hackaz.fapps.fappshackaz");
+
+            Bitmap b1 = drawableToBitmap(icon);
+            String s1 = encodeToBase64(b1);
+            Bitmap b2 = decodeBase64(s1);
+
+            ((ImageView) findViewById(R.id.image_area)).setImageBitmap(b2);
+
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -149,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+    // SEND TO SERVER: PACKAGE NAMES
     public LinkedList<String> getUserAppPackageNames(List<String> packageNames) {
         ApplicationInfo ai = null;
         LinkedList<String> result = new LinkedList<>();
@@ -179,6 +202,66 @@ public class MainActivity extends AppCompatActivity {
         }
         return icons;
     }
+
+    // icon to bitmap
+    public static Bitmap drawableToBitmap (Drawable drawable) {
+        Bitmap bitmap = null;
+
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if (bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+
+        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+//    // SEND TO SERVER: icon bitmaps to strings
+//    public List<String> getIconStrings(List<Drawable> icons) {
+//        List<String> iconStrings = new LinkedList<>();
+//        for(Drawable icon : icons) {
+//            Bitmap photo = drawableToBitmap(icon);
+//            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+//            photo.compress(Bitmap.CompressFormat.PNG, 100, bao);
+//            byte[] ba = bao.toByteArray();
+//            String ba1= Base64.encodeToString(ba, Base64.DEFAULT);
+//            iconStrings.add(ba1);
+//        }
+//        return iconStrings;
+//    }
+
+    // SEND TO SERVER: icon bitmap to string
+    // EXAMPLE: String myBase64Image = encodeToBase64(myBitmap
+    public static String encodeToBase64(Bitmap image)
+    {
+        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
+        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+    }
+
+    // GET FROM SERVER: icon string to bitmap to drawable icon
+    // EXAMPLE: Bitmap myBitmapAgain = decodeBase64(myBase64Image);
+    public static Bitmap decodeBase64(String input)
+    {
+        byte[] decodedBytes = Base64.decode(input, 0);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+    /*
+    Display a bitmap in view code snippet
+        ImageView mImg;
+        mImg = (ImageView) findViewById(R.id.imageView2);
+        mImg.setImageBitmap(bmOut);
+     */
 
     /**
      * Called by getUserAppNames, uses regex to check if APK directory path is in system/ or data/
@@ -412,20 +495,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
-
-
-    //like button will save app information into a personal like list?
-    //also removes from the suggested apps list
-    public void onClickLikeButton(View v){
-        tv = (TextView)findViewById(R.id.description);
-        if(sug.getSuggestedApps().size() == 0){
-            tv.setText("No apps left to suggest :(");
-            return;
-        }
-        sug.currentUser.addElementToInterestedList(sug.getSuggestedApps().get(0)); //add string value
-        sug.getSuggestedApps().remove(0);
-        displayDescription();
     }
 
     //dislike button will save app information into a personal dislike list
