@@ -360,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             appInfo = pm.getApplicationInfo(sug.getSuggestedApps().get(0), 0);
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            //appInfo = sug.getSuggestedApps().get(0);
         }
         String des = appInfo.loadDescription(pm).toString();
 
@@ -374,7 +374,6 @@ public class MainActivity extends AppCompatActivity {
         String result = "";
         return (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
     }
-
 
     private class ProfileNode implements Serializable{
         public UserDemographic ud;
