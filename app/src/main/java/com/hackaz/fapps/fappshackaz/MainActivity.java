@@ -26,11 +26,9 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -71,10 +69,8 @@ public class MainActivity extends AppCompatActivity {
         sendUserData();
         int flags = GET_META_DATA |
                 GET_SHARED_LIBRARY_FILES;
-        try {((TextView) findViewById(R.id.textView2)).setText(pm.getApplicationLabel(pm.getApplicationInfo(getSuggestions().get(0), flags)).toString()); }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        ((TextView) findViewById(R.id.textView2)).setText(apps.get(getSuggestions().get(0)).name);
+
         this.firstSuggestedToIcon( getSuggestions().get(0));
         // THEODORE'S DISPLAY ICON CODE
 //        try {
@@ -115,18 +111,17 @@ public class MainActivity extends AppCompatActivity {
 
     // FOR THE NEXT BUTTON
     public void firstSuggestedToIcon(String packageName) {
-        try {
-            Drawable icon = pm.getApplicationIcon(packageName);
+            //Drawable icon = pm.getApplicationIcon(packageName);
 
-            Bitmap b1 = drawableToBitmap(icon);
-            String s1 = encodeToBase64(b1);
+            //Bitmap b1 = drawableToBitmap(icon);
+            AppNode a = apps.get(packageName);
+
+            String s1 = a.icon;//encodeToBase64(b1);
             Bitmap b2 = decodeBase64(s1);
 
             ((ImageView) findViewById(R.id.image_area)).setImageBitmap(b2);
 
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+
     }
 
     /** Called when the user clicks on the button */
@@ -428,13 +423,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initializeApps() {
-        try {
+        try {/*
             FileInputStream fis = new FileInputStream("appdata");
             ObjectInputStream input = new ObjectInputStream(fis);
             apps = (HashMap<String,AppNode>) input.readObject();
             input.close();
-            fis.close();
-
+            fis.close();*/
+            apps = new HashMap<String, AppNode>();
             Socket conn = new Socket("ec2-35-166-192-131.us-west-2.compute.amazonaws.com", 8080);
             OutputStream os = conn.getOutputStream();
             PrintWriter out = new PrintWriter(os,true);
@@ -597,10 +592,9 @@ public class MainActivity extends AppCompatActivity {
         this.firstSuggestedToIcon(stringies.get(0));
         int flags = GET_META_DATA |
                 GET_SHARED_LIBRARY_FILES;
-        try {((TextView) findViewById(R.id.textView2)).setText(pm.getApplicationLabel(pm.getApplicationInfo(stringies.get(0), flags)).toString()); }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        ((TextView) findViewById(R.id.textView2)).setText(apps.get(stringies.get(0)).name);
+
     }
 
     //download button will take you to the play store
@@ -638,10 +632,9 @@ public class MainActivity extends AppCompatActivity {
         this.firstSuggestedToIcon(stringies.get(0));
         int flags = GET_META_DATA |
                 GET_SHARED_LIBRARY_FILES;
-        try {((TextView) findViewById(R.id.textView2)).setText(pm.getApplicationLabel(pm.getApplicationInfo(stringies.get(0), flags)).toString()); }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        ((TextView) findViewById(R.id.textView2)).setText(apps.get(stringies.get(0)).name);
+
     }
 
     //goes to app store
