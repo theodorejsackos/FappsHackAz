@@ -15,6 +15,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -28,12 +32,18 @@ import static android.content.pm.PackageManager.GET_SHARED_LIBRARY_FILES;
 public class MainActivity extends AppCompatActivity {
     public final static String EXTRA_MESSAGE = "com.fapps.hackaz.MESSAGE";
 
+    PrintWriter out = null;
+    BufferedReader in = null;
+    Socket conn = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        new Thread(new SendMessage("Hello there buddy!")).start();
+        Log.d("SERVER_CONN", "Message Send in thread");
     }
         /** Called when the user clicks on the button */
     public void lookup_apps(View view) {
@@ -132,5 +142,31 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return 0;
+    }
+
+    private class SendMessage implements Runnable {
+        private String mMsg;
+
+        public SendMessage(String msg) {
+            mMsg = msg;
+        }
+        public void run() {
+            try {
+                Log.d("SERVER_CONN", "Reached 1");
+                conn = new Socket("150.135.210.113", 1925);  //connect to server
+                Log.d("SERVER_CONN", "Reached 2");
+                out = new PrintWriter(conn.getOutputStream(),true);
+                Log.d("SERVER_CONN", "Reached 3");
+                in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                out.write(mMsg);  //write the message to output stream
+                out.close();
+                conn.close();   //closing the connection
+
+                Log.d("SERVER_CONN", "(In thread) Message sent");
+            } catch (Exception e) {
+                Log.d("SERVER_CONN", "FAILURE");
+                e.printStackTrace();
+            }
+        }
     }
 }
